@@ -59,7 +59,7 @@ hospital-management-microservices/
 
 ## 4. Security & Environment Configuration
 
-All microservices adhere to 12-factor application security practices. Credentials and signing keys are read dynamically from environment variables, preventing hardcoded secrets in the codebase.
+Deployment-sensitive configuration is environment-variable aware. JWT signing secrets are required through environment variables, while database connection settings provide local-development defaults that can be overridden in deployment environments.
 
 ### Mandatory Environment Variables
 
@@ -109,26 +109,28 @@ Start the services in the following order:
    export JWT_SECRET="your-secure-base64-encoded-jwt-secret-string-here"
    mvn spring-boot:run
    ```
-   *Gateway runs on `http://localhost:9090`.*
+   *Gateway runs on `http://localhost:9090` (requires `JWT_SECRET` for route authentication).*
 
-3. **Core Backend Services** (Run in separate terminal windows with `JWT_SECRET` set):
+3. **Core Backend Services** (Run in separate terminal windows):
    ```bash
-   # Auth Service
-   cd ../auth-service && mvn spring-boot:run
+   # Auth Service (requires JWT_SECRET for signing tokens)
+   cd ../auth-service
+   export JWT_SECRET="your-secure-base64-encoded-jwt-secret-string-here"
+   mvn spring-boot:run
 
-   # Patient Service
+   # Patient Service (uses default DB settings or DB_* env variables)
    cd ../patient-service && mvn spring-boot:run
 
-   # Appointment Service
+   # Appointment Service (uses default DB settings or DB_* env variables)
    cd ../appointment-service && mvn spring-boot:run
 
-   # EHR Service
+   # EHR Service (uses default DB settings or DB_* env variables)
    cd ../ehr-service && mvn spring-boot:run
 
-   # Pharmacy Service
+   # Pharmacy Service (uses default DB settings or DB_* env variables)
    cd ../pharmacy-service && mvn spring-boot:run
 
-   # Billing Service
+   # Billing Service (uses default DB settings or DB_* env variables)
    cd ../billing-service && mvn spring-boot:run
    ```
 

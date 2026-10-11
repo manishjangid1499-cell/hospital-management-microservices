@@ -1,30 +1,29 @@
 # Hospital Management System (HMS) - Microservices Architecture
 
-A robust, enterprise-grade Hospital Management System built with a Spring Boot microservices backend and a responsive vanilla JavaScript / Bootstrap frontend. The system provides role-based access control and integrated workflows for Hospital Administrators, Doctors, Receptionists, Patients, Pharmacists, and Billing Officers.
+A robust, enterprise-grade Hospital Management System built with a Spring Boot microservices backend and a responsive role-based web frontend. The system provides role-based access control and integrated workflows for Hospital Administrators, Doctors, Receptionists, Patients, Pharmacists, and Billing Officers.
 
 ---
 
 ## 1. System Architecture
 
-The project is structured as a multi-module Maven reactor project comprising 9 microservice modules and a single-page web frontend:
+The project is structured as a multi-module Maven reactor project comprising 8 microservice modules and a role-based web frontend:
 
 ```
-HMS_Complete_Updated_Project/
+hospital-management-microservices/
 ├── eureka-server/          # Service Registry & Discovery (Port 8761)
-├── api-gateway/            # Reactive Gateway with Global JWT Filter & Routing (Port 8080)
+├── api-gateway/            # Reactive Gateway with Global JWT Filter & Routing (Port 9090)
 ├── auth-service/           # User Auth, Role Management, JWT Issuance (Port 8081)
 ├── patient-service/        # Patient Registration, Demographics & Medical Profile (Port 8082)
 ├── appointment-service/    # Doctor Availability & Appointment Scheduling (Port 8083)
 ├── ehr-service/            # Electronic Health Records & Clinical Encounters (Port 8084)
 ├── pharmacy-service/       # Medication Inventory & Prescription Dispensing (Port 8085)
 ├── billing-service/        # Invoicing, Payment Tracking & Insurance Copay (Port 8086)
-├── notification-service/   # Asynchronous Alerts & Email Notifications (Port 8087)
 └── frontend/               # Role-based Web Application UI
 ```
 
 ### Key Architectural Characteristics
 - **Service Discovery**: Netflix Eureka registry facilitates dynamic discovery and client-side load balancing.
-- **Edge Routing & Security**: Spring Cloud Gateway intercepts all external HTTP traffic, validates JWT bearer tokens, and routes traffic downstream with user identity headers.
+- **Edge Routing & Security**: Spring Cloud Gateway intercepts all external HTTP traffic on port 9090, validates JWT bearer tokens, and routes traffic downstream with user identity headers.
 - **Inter-Service Communication**: Declarative Spring Cloud OpenFeign clients enable secure, synchronous communication between microservices.
 - **Isolated Datastores**: Each operational service connects to its dedicated MySQL database schema.
 
@@ -35,27 +34,26 @@ HMS_Complete_Updated_Project/
 | Service Name | Port | Description | Database Schema |
 | :--- | :--- | :--- | :--- |
 | **Eureka Server** | `8761` | Service Registry & Discovery Server | N/A |
-| **API Gateway** | `8080` | Edge Router, Route Validator & JWT Filter | N/A |
+| **API Gateway** | `9090` | Edge Router, Route Validator & JWT Filter | N/A |
 | **Auth Service** | `8081` | Authentication, JWT Generation, RBAC | `auth_db` |
 | **Patient Service** | `8082` | Patient Records & Medical Information | `patient_db` |
 | **Appointment Service** | `8083` | Booking, Doctor Slots & Appointments | `appointment_db` |
 | **EHR Service** | `8084` | Clinical Records, Diagnoses & Treatment History | `ehr_db` |
 | **Pharmacy Service** | `8085` | Pharmacy Inventory, Stock & Prescriptions | `pharmacy_db` |
 | **Billing Service** | `8086` | Invoices, Payments, Billing Statements | `billing_db` |
-| **Notification Service** | `8087` | System Notifications & Email Dispatcher | N/A |
 | **Frontend UI** | Static | Bootstrap 5 + Vanilla JavaScript Web UI | N/A |
 
 ---
 
 ## 3. Technology Stack
 
-- **Java Version**: OpenJDK 21 LTS
+- **Java Version**: Java 17+ (Compatible with JDK 17 & JDK 21)
 - **Backend Framework**: Spring Boot 3.2.5
 - **Cloud Components**: Spring Cloud 2023.0.1 (Eureka Server/Client, Spring Cloud Gateway, OpenFeign)
 - **Security**: Spring Security 6.x, JJWT (`io.jsonwebtoken` 0.11.5)
 - **Data & Persistence**: Spring Data JPA, Hibernate, MySQL Connector/J
 - **Build Tool**: Apache Maven (Multi-Module Reactor POM)
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+), Bootstrap 5.3
+- **Frontend**: Multi-page HTML5, CSS3, JavaScript (ES6+), Bootstrap 5.3
 
 ---
 
@@ -84,7 +82,7 @@ Before launching the services, ensure the following environment variables are ex
 ## 5. Getting Started & Local Development
 
 ### Prerequisites
-1. **JDK 21** or later installed and configured on your `PATH`.
+1. **Java 17 or 21** installed and configured on your `PATH`.
 2. **Apache Maven 3.8+** installed.
 3. **MySQL Server 8.0+** running on `localhost:3306`.
 
@@ -111,6 +109,7 @@ Start the services in the following order:
    export JWT_SECRET="your-secure-base64-encoded-jwt-secret-string-here"
    mvn spring-boot:run
    ```
+   *Gateway runs on `http://localhost:9090`.*
 
 3. **Core Backend Services** (Run in separate terminal windows with `JWT_SECRET` set):
    ```bash
@@ -157,9 +156,3 @@ To seed sample data (administrator, doctor, receptionist, pharmacist, and billin
    - **Role**: `ROLE_ADMIN`
 
 *(Note: Admin password resets are not forced on subsequent restarts; existing passwords are preserved.)*
-
----
-
-## 7. License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
